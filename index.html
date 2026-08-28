@@ -7152,7 +7152,7 @@ const MASTER_API_KEY = '$2a$10$IecvGoWgfhfhPACcMbpQ1ePIEi423.hKIhOwKhAlyX3ARia6W
   var newPath = base + rest + (q || remaining) + location.hash;
   history.replaceState(null, '', newPath);
 })();
-const _basePath = '/' + (location.pathname.split('/').filter(Boolean)[0] || '') + '/';
+const _basePath = (() => { const seg = location.pathname.split('/').filter(Boolean)[0]; return seg ? '/' + seg + '/' : '/'; })();
 const _hostPath = (location.hostname + _basePath).replace(/\/$/, '');
 const _urlBin = new URLSearchParams(location.search).get('bin') || '';
 // ── Slug routing disabled ──
@@ -9046,8 +9046,45 @@ function offerSlugFromTitle(title) {
     .map(w => w.toLowerCase().replace(/[^a-z0-9]+/g, ''))
     .filter(Boolean).join('-');
 }
+
+// Which sidebar section is active, tracked so the URL can always reflect both
+// the offer AND the section as two real path segments: /offer-slug/section-slug
+let _currentTab = 'report';
+const TAB_PATH_SLUGS = { report:'', offers:'offers', traffic:'channels', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+const TAB_PATH_SLUGS_REVERSE = { offers:'offers', channels:'traffic', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+
+function setTabAndUpdateUrl(tab) {
+  _currentTab = tab;
+  const title = document.getElementById('main-title')?.dataset?.text || '';
+  updateOfferSlugPath(title);
+}
+
+// Called once after the initial offer finishes loading, so a URL like
+// /obd-fuel/ads opens directly into that section instead of always landing on Report.
+function restoreTabFromUrl() {
+  const rest = location.pathname.replace(_basePath, '').replace(/\/$/, '').replace(/\.html$/, '');
+  const parts = rest.split('/').filter(Boolean);
+  const tabSlug = parts[1] || '';
+  const tab = TAB_PATH_SLUGS_REVERSE[tabSlug];
+  if (!tab) return;
+  // If this variant of the page doesn't have the target nav item (e.g. History is
+  // editor-only and absent from the read-only public build), fall back to Report
+  // instead of throwing on a missing element.
+  const navIds = { offers:'nav-offers', history:'nav-history', export:'nav-export', traffic:'nav-traffic', ads:'nav-ads', funnels:'nav-funnels' };
+  if (navIds[tab] && !document.getElementById(navIds[tab])) return;
+  if (tab === 'offers') { openOffersPanel(); return; }
+  if (tab === 'history') { openHistoryPanel(); return; }
+  if (tab === 'export') { openExportPanel(); return; }
+  if (['traffic','ads','funnels'].includes(tab)) { openBoardView(tab); return; }
+}
 function updateOfferSlugPath(title) {
-  // slug-based URL redirects disabled
+  if (window._offerSwitching) return;
+  try {
+    const offerSlug = offerSlugFromTitle(title);
+    const tabSlug = TAB_PATH_SLUGS[_currentTab] || '';
+    const newPath = offerSlug ? (_basePath + offerSlug + (tabSlug ? '/' + tabSlug : '')) : _basePath;
+    if (location.pathname !== newPath) history.replaceState(null, '', newPath);
+  } catch(e) { /* ignore SecurityError in iframes/previews */ }
 }
 
 function updateTitleLinkBtn(url) {
@@ -9071,6 +9108,7 @@ function openReport() {
   closeHistoryPanel(); closeExportPanel();
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-report').classList.add('active');
+  setTabAndUpdateUrl('report');
   closeOffersPanel();
   // Scroll to top of main content
   const main = document.querySelector('.ds-main');
@@ -9118,6 +9156,7 @@ function openBoardView(board) {
   // Update nav
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById(cfg.nav).classList.add('active');
+  setTabAndUpdateUrl(board);
 
   // Update header title and subtitle
   const headerTitle = document.querySelector('.ds-top-header-title');
@@ -9164,6 +9203,7 @@ function closeBoardView() {
   // Restore Report nav
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-report').classList.add('active');
+  setTabAndUpdateUrl('report');
 }
 
 /* ── Offers Panel ── */
@@ -9180,6 +9220,7 @@ function openOffersPanel() {
   document.getElementById('offers-panel-overlay').classList.add('open');
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-offers').classList.add('active');
+  setTabAndUpdateUrl('offers');
   renderOffersList();
 }
 function closeOffersPanel() {
@@ -9188,6 +9229,7 @@ function closeOffersPanel() {
   // Restore Report as active
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-report').classList.add('active');
+  setTabAndUpdateUrl('report');
 }
 function renderOffersList(filter) {
   const list = document.getElementById('offers-panel-list');
@@ -11306,6 +11348,9 @@ function openHistoryPanel() {
   }
   if (document.getElementById('history-panel').classList.contains('open')) { closeHistoryPanel(); return; }
   closeOffersPanel(); closeExportPanel();
+  document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-history').classList.add('active');
+  setTabAndUpdateUrl('history');
   const list = document.getElementById('history-list');
   const count = document.getElementById('history-count');
   const allSnaps = [...undoStack].reverse();
@@ -11352,6 +11397,7 @@ function closeHistoryPanel() {
   document.getElementById('history-panel-overlay').classList.remove('open');
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-report').classList.add('active');
+  setTabAndUpdateUrl('report');
 }
 
 // Legacy aliases for any remaining calls
@@ -11371,6 +11417,7 @@ function openExportPanel() {
   document.getElementById('export-panel-overlay').classList.add('open');
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-export').classList.add('active');
+  setTabAndUpdateUrl('export');
 }
 
 function closeExportPanel() {
@@ -11378,6 +11425,7 @@ function closeExportPanel() {
   document.getElementById('export-panel-overlay').classList.remove('open');
   document.querySelectorAll('.ds-nav-item').forEach(el => el.classList.remove('active'));
   document.getElementById('nav-report').classList.add('active');
+  setTabAndUpdateUrl('report');
 }
 
 function restoreVersion(stackIdx) {
@@ -11660,7 +11708,7 @@ async function offerLoadAll() {
 
   // If table empty AND no URL slug, auto-save current page as first offer
   const _initUrlParams = new URLSearchParams(location.search);
-  const _initSlug = _initUrlParams.get('offer') || location.pathname.replace(_basePath, '').replace(/\/$/, '').replace(/\.html$/, '') || '';
+  const _initSlug = _initUrlParams.get('offer') || (location.pathname.replace(_basePath, '').replace(/\.html$/, '').split('/').filter(Boolean)[0]) || '';
   if (_allOffers.length === 0 && !_initSlug) {
     const title = (document.getElementById('main-title')?.dataset?.text || '').trim();
     if (title && title !== '—') {
@@ -11690,6 +11738,7 @@ async function offerLoadAll() {
     if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
     await offerLoad(_allOffers[0].id, false);
   }
+  restoreTabFromUrl();
   if (window._loaderDone) window._loaderDone();
 }
 
