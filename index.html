@@ -11728,15 +11728,23 @@ async function offerLoadAll() {
 
   offerRebuildSelect();
 
-  // Restore last selected — prefer last-used offer
-  const lastId = localStorage.getItem(SB_OFFER_KEY);
-  const lastMatch = lastId && _allOffers.find(o => o.id === lastId);
-  if (lastMatch) {
+  // Restore last selected — the URL's own slug wins if it matches a real offer,
+  // since otherwise the cached "last viewed" offer always overrides the link
+  // someone actually opened (this was the bug: a slug was computed but never checked).
+  const slugMatch = _initSlug && _allOffers.find(o => offerSlugFromTitle(o.name) === _initSlug);
+  if (slugMatch) {
     if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
-    await offerLoad(lastId, false);
-  } else if (_allOffers.length > 0) {
-    if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
-    await offerLoad(_allOffers[0].id, false);
+    await offerLoad(slugMatch.id, false);
+  } else {
+    const lastId = localStorage.getItem(SB_OFFER_KEY);
+    const lastMatch = lastId && _allOffers.find(o => o.id === lastId);
+    if (lastMatch) {
+      if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
+      await offerLoad(lastId, false);
+    } else if (_allOffers.length > 0) {
+      if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
+      await offerLoad(_allOffers[0].id, false);
+    }
   }
   restoreTabFromUrl();
   if (window._loaderDone) window._loaderDone();
