@@ -9060,8 +9060,8 @@ function offerSlugFromTitle(title) {
 // Which sidebar section is active, tracked so the URL can always reflect both
 // the offer AND the section as two real path segments: /offer-slug/section-slug
 let _currentTab = 'report';
-const TAB_PATH_SLUGS = { report:'', offers:'offers', traffic:'channels', ads:'ads', funnels:'funnels', history:'history', export:'export' };
-const TAB_PATH_SLUGS_REVERSE = { offers:'offers', channels:'traffic', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+const TAB_PATH_SLUGS = { report:'report', offers:'offers', traffic:'channels', ads:'ads', funnels:'funnels', history:'history', export:'export' };
+const TAB_PATH_SLUGS_REVERSE = { report:'report', offers:'offers', channels:'traffic', ads:'ads', funnels:'funnels', history:'history', export:'export' };
 
 function setTabAndUpdateUrl(tab) {
   _currentTab = tab;
@@ -9073,13 +9073,13 @@ function setTabAndUpdateUrl(tab) {
 // /obd-fuel/ads opens directly into that section instead of always landing on Report.
 function restoreTabFromUrl() {
   const tabSlug = _initialTabSlug;
-  const tab = TAB_PATH_SLUGS_REVERSE[tabSlug];
-  if (!tab) return;
+  const tab = TAB_PATH_SLUGS_REVERSE[tabSlug] || 'report';
   // If this variant of the page doesn't have the target nav item (e.g. History is
   // editor-only and absent from the read-only public build), fall back to Report
   // instead of throwing on a missing element.
   const navIds = { offers:'nav-offers', history:'nav-history', export:'nav-export', traffic:'nav-traffic', ads:'nav-ads', funnels:'nav-funnels' };
   if (navIds[tab] && !document.getElementById(navIds[tab])) return;
+  if (tab === 'report') { openReport(); return; }
   if (tab === 'offers') { openOffersPanel(); return; }
   if (tab === 'history') { openHistoryPanel(); return; }
   if (tab === 'export') { openExportPanel(); return; }
@@ -11760,7 +11760,12 @@ async function offerLoadAll() {
   // after that deferred call, or its own DOM setup silently overwrites the tab we just
   // restored. A same-tick setTimeout(...,0) queues after one already scheduled earlier,
   // but a small extra margin is used here to also cover any further nested async work.
-  setTimeout(restoreTabFromUrl, 120);
+  // A single delay was not reliably enough in practice — some deferred DOM setup
+  // elsewhere finishes at an unpredictable time. Reasserting the intended tab at
+  // several points over the following second guarantees it's the final word,
+  // regardless of that timing. restoreTabFromUrl() always re-applies the same
+  // frozen, originally-requested tab, so calling it repeatedly is safe.
+  [120, 400, 900].forEach(ms => setTimeout(restoreTabFromUrl, ms));
   if (window._loaderDone) window._loaderDone();
 }
 
