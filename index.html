@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Multi-Platform Creative Research</title>
+  <!-- BUILD MARKER: 2026-09-01T14:25:38Z — search this exact string to confirm this deployed copy is current -->
+  <script>console.log("%c[Build] Deployed file build marker: 2026-09-01T14:25:38Z", "color:#3b82f6;font-weight:bold");</script>
   <script>
     // ── Loader globals — defined early so offerLoadAll can call them ──
     // ── Apply theme before first paint to avoid flash ──
@@ -7157,6 +7159,14 @@ const _hostPath = (location.hostname + _basePath).replace(/\/$/, '');
 const _urlBin = new URLSearchParams(location.search).get('bin') || '';
 // ── Slug routing disabled ──
 const _initialUrlSlug = '';
+// Captured once, here, before anything else in the app has a chance to rewrite the
+// URL (e.g. runPostInit calling updateOfferSlugPath while _currentTab is still its
+// default). restoreTabFromUrl() must read from this frozen value, never from a live
+// re-parse of location.pathname, or an in-between write silently erases the tab segment.
+const _initialTabSlug = (() => {
+  const rest = location.pathname.replace(_basePath, '').replace(/\.html$/, '');
+  return rest.split('/').filter(Boolean)[1] || '';
+})();
 // Per-file key — always keyed to base path, not the slug URL
 const _pageKey = btoa(location.hostname + _basePath).replace(/[^a-zA-Z0-9]/g,'').slice(-16);
 const LS_SETTINGS = 'ecoverage_settings_v1_' + _pageKey;
@@ -9062,9 +9072,7 @@ function setTabAndUpdateUrl(tab) {
 // Called once after the initial offer finishes loading, so a URL like
 // /obd-fuel/ads opens directly into that section instead of always landing on Report.
 function restoreTabFromUrl() {
-  const rest = location.pathname.replace(_basePath, '').replace(/\/$/, '').replace(/\.html$/, '');
-  const parts = rest.split('/').filter(Boolean);
-  const tabSlug = parts[1] || '';
+  const tabSlug = _initialTabSlug;
   const tab = TAB_PATH_SLUGS_REVERSE[tabSlug];
   if (!tab) return;
   // If this variant of the page doesn't have the target nav item (e.g. History is
@@ -11746,7 +11754,13 @@ async function offerLoadAll() {
       await offerLoad(_allOffers[0].id, false);
     }
   }
-  restoreTabFromUrl();
+  // offerLoad() itself defers its own DOM setup (runPostInit) via setTimeout(...,0)
+  // on the uncached-data path — it is NOT awaited, so awaiting offerLoad() above does
+  // not guarantee that work has finished yet. Restoring the tab has to happen strictly
+  // after that deferred call, or its own DOM setup silently overwrites the tab we just
+  // restored. A same-tick setTimeout(...,0) queues after one already scheduled earlier,
+  // but a small extra margin is used here to also cover any further nested async work.
+  setTimeout(restoreTabFromUrl, 120);
   if (window._loaderDone) window._loaderDone();
 }
 
