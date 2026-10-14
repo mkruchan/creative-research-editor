@@ -7761,14 +7761,14 @@ function buildAdsGrid() {
       </div>`;
     };
     const linkBlock = `<div style="padding-top:6px;border-top:1px solid var(--border-light);margin-top:4px;">
-      <div style="display:flex;gap:12px;align-items:center;">
+      <div style="display:flex;flex-wrap:wrap;column-gap:10px;row-gap:2px;align-items:center;">
         <div>${mkEditableLink(landingUrl,'Landing',7)}</div>
         <div>${mkEditableLink(fanUrl,'Fan page',8)}</div>
         <div>${mkEditableLink(spyUrl,'Spy tool',9)}</div>
       </div>
     </div>`;
 
-    const linkBlockTop = `<div style="margin-bottom:6px;padding:5px 0;border-bottom:1px solid var(--border-light);display:flex;gap:12px;align-items:center;">
+    const linkBlockTop = `<div style="margin-bottom:6px;padding:5px 0;border-bottom:1px solid var(--border-light);display:flex;flex-wrap:wrap;column-gap:10px;row-gap:2px;align-items:center;">
         <div>${mkEditableLink(landingUrl,'Landing',7)}</div>
         <div>${mkEditableLink(fanUrl,'Fan page',8)}</div>
         <div>${mkEditableLink(spyUrl,'Spy tool',9)}</div>
