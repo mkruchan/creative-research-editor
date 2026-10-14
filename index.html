@@ -1191,6 +1191,9 @@
     .adp-copy-placeholder { color: #9ca3af; font-style: italic; }
 
     /* Chip */
+    /* Coloured chips (grid cards, detail panel): light colours come in as --chip-bg/--chip-c; dark mode derives a dark tint from the text colour */
+    span.gc-chip { background: var(--chip-bg); color: var(--chip-c); }
+    body.force-dark span.gc-chip { background: color-mix(in srgb, var(--chip-c) 28%, #18181b); color: color-mix(in srgb, var(--chip-c) 40%, #ffffff); }
     .adp-badge-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
     .adp-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
 
@@ -7419,7 +7422,7 @@ function buildTrafficGrid() {
     };
     const clr = CHIP_COLORS[val] || {bg:'#E5E7EB',color:'#374151'};
     const chipHtml = hasVal
-      ? `<span style="background:${clr.bg};color:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
+      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
       : `<span style="opacity:0.4;font-size:10px;">— none —</span>`;
     const tdIdx = Array.from(td.parentElement.children).indexOf(td) + 1;
     const opts = Array.from(sel.options).map(o =>
@@ -7525,7 +7528,7 @@ function buildFunnelsGrid() {
     const obs = getText(tds[9]);
     const efv = efSel?.value || '';
     const efc = efv === 'ef-yes' ? {bg:'#DCFCE7',color:'#166534'} : {bg:'#FEE2E2',color:'#B91C1C'};
-    const efChipHtml = efv ? `<span style="background:${efc.bg};color:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const efChipHtml = efv ? `<span class="gc-chip" style="--chip-bg:${efc.bg};--chip-c:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     const efOpts = efSel ? Array.from(efSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
     const efChip = efSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">In Everflow?</div>
@@ -7547,14 +7550,14 @@ function buildFunnelsGrid() {
     const fv = funnelSel?.value || '';
     const ft = fv ? (funnelSel.options[funnelSel.selectedIndex]?.text || fv) : '';
     const fc = FUNNEL_CHIP_COLORS[fv] || {bg:'#E5E7EB',color:'#374151'};
-    const funnelChipHtml = fv ? `<span style="background:${fc.bg};color:${fc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${ft}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const funnelChipHtml = fv ? `<span class="gc-chip" style="--chip-bg:${fc.bg};--chip-c:${fc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${ft}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     // Source chip
     const SOURCE_CHIP_COLORS = {'meta':{'bg':'#DBEAFE','color':'#1D4ED8'},'tiktok':{'bg':'#F3F4F6','color':'#111827'},'google':{'bg':'#dcfce7','color':'#166534'},'native':{'bg':'#D1FAE5','color':'#065F46'},'youtube':{'bg':'#FEE2E2','color':'#B91C1C'},'taboola':{'bg':'#FEF3C7','color':'#92400E'},'outbrain':{'bg':'#EDE9FE','color':'#6D28D9'},'mgid':{'bg':'#DBEAFE','color':'#00206A'},'revcontent':{'bg':'#D1FAE5','color':'#065F46'},'facebook':{'bg':'#DBEAFE','color':'#1D4ED8'},'push':{'bg':'#EDE9FE','color':'#6D28D9'}};
     const sourceOpts = sourceSel ? Array.from(sourceSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
     const sv = sourceSel?.value || '';
     const st = sv ? (sourceSel.options[sourceSel.selectedIndex]?.text || sv) : '';
     const sc = SOURCE_CHIP_COLORS[sv] || {bg:'#E5E7EB',color:'#374151'};
-    const sourceChipHtml = sv ? `<span style="background:${sc.bg};color:${sc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${st}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const sourceChipHtml = sv ? `<span class="gc-chip" style="--chip-bg:${sc.bg};--chip-c:${sc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${st}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
     const sourceChip = sourceSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Traffic source</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
@@ -7676,7 +7679,7 @@ function buildAdsGrid() {
     };
     const clr = CHIP_COLORS[val] || {bg:'#E5E7EB',color:'#374151'};
     const chipHtml = hasVal
-      ? `<span style="background:${clr.bg};color:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
+      ? `<span class="gc-chip" style="--chip-bg:${clr.bg};--chip-c:${clr.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${text}</span>`
       : `<span style="opacity:0.4;font-size:10px;">— none —</span>`;
     const tdIdx = Array.from(td.parentElement.children).indexOf(td) + 1;
     const opts = Array.from(sel.options).map(o =>
@@ -8379,7 +8382,7 @@ function _adpChip(val, colorMap) {
   if (!val) return '';
   const key = val.toLowerCase().replace(/\s+/g,'-');
   const c = colorMap[key] || {bg:'#E5E7EB',color:'#374151'};
-  return `<span class="adp-badge-pill" style="background:${c.bg};color:${c.color};">${val}</span>`;
+  return `<span class="adp-badge-pill gc-chip" style="--chip-bg:${c.bg};--chip-c:${c.color};">${val}</span>`;
 }
 
 /* ── Tab navigation ── */
