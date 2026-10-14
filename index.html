@@ -568,8 +568,8 @@
     #ads-table td:nth-child(5), #ads-table td:nth-child(6) { position: relative; }
     #ads-table td:nth-child(5) textarea, #ads-table td:nth-child(6) textarea,
     #ads-table td.frozen-offer textarea { width: 100%; border-right: none !important; }
-    #funnels-table td:nth-child(3), #funnels-table td:nth-child(5), #funnels-table td:nth-child(8) { position: relative; }
-    #funnels-table td:nth-child(3) textarea, #funnels-table td:nth-child(5) textarea, #funnels-table td:nth-child(8) textarea { width: 100%; border-right: none !important; }
+    #funnels-table td:nth-child(3), #funnels-table td:nth-child(6), #funnels-table td:nth-child(7), #funnels-table td:nth-child(10) { position: relative; }
+    #funnels-table td:nth-child(3) textarea, #funnels-table td:nth-child(6) textarea, #funnels-table td:nth-child(7) textarea, #funnels-table td:nth-child(10) textarea { width: 100%; border-right: none !important; }
     #traffic-table td:nth-child(3), #traffic-table td:nth-child(4), #traffic-table td:nth-child(6) { position: relative; }
     #traffic-table td:nth-child(3) textarea, #traffic-table td:nth-child(4) textarea, #traffic-table td:nth-child(6) textarea { position: absolute; inset: 0; width: 100%; height: 100% !important; border-right: none !important; }
     tbody tr:hover td.frozen-num { background: var(--bg-secondary); }
@@ -3838,8 +3838,8 @@
     #ads-table td:nth-child(15),
     #ads-table td:nth-child(16),
     #funnels-table td:nth-child(3),
-    #funnels-table td:nth-child(5),
-    #funnels-table td:nth-child(8) {
+    #funnels-table td:nth-child(6), #funnels-table td:nth-child(7),
+    #funnels-table td:nth-child(10) {
       position: relative !important;
       overflow: hidden !important;
     }
@@ -3854,8 +3854,8 @@
     #ads-table td:nth-child(15) textarea,
     #ads-table td:nth-child(16) textarea,
     #funnels-table td:nth-child(3) textarea,
-    #funnels-table td:nth-child(5) textarea,
-    #funnels-table td:nth-child(8) textarea {
+    #funnels-table td:nth-child(6) textarea, #funnels-table td:nth-child(7) textarea,
+    #funnels-table td:nth-child(10) textarea {
       position: absolute !important;
       inset: 0 !important;
       width: 100% !important;
@@ -3885,8 +3885,8 @@
     #ads-table td:nth-child(15) textarea:focus,
     #ads-table td:nth-child(16) textarea:focus,
     #funnels-table td:nth-child(3) textarea:focus,
-    #funnels-table td:nth-child(5) textarea:focus,
-    #funnels-table td:nth-child(8) textarea:focus {
+    #funnels-table td:nth-child(6) textarea:focus, #funnels-table td:nth-child(7) textarea:focus,
+    #funnels-table td:nth-child(10) textarea:focus {
       position: relative !important;
       inset: unset !important;
       height: auto !important;
@@ -4584,8 +4584,8 @@
     #ads-table td:nth-child(5) textarea,
     #ads-table td:nth-child(6) textarea,
     #funnels-table td:nth-child(3) textarea,
-    #funnels-table td:nth-child(5) textarea,
-    #funnels-table td:nth-child(7) textarea {
+    #funnels-table td:nth-child(6) textarea, #funnels-table td:nth-child(7) textarea,
+    #funnels-table td:nth-child(9) textarea {
       position: absolute !important;
       inset: 0 !important;
       width: 100% !important;
@@ -4608,8 +4608,8 @@
     #ads-table td:nth-child(5) textarea:focus,
     #ads-table td:nth-child(6) textarea:focus,
     #funnels-table td:nth-child(3) textarea:focus,
-    #funnels-table td:nth-child(5) textarea:focus,
-    #funnels-table td:nth-child(7) textarea:focus {
+    #funnels-table td:nth-child(6) textarea:focus, #funnels-table td:nth-child(7) textarea:focus,
+    #funnels-table td:nth-child(9) textarea:focus {
       position: relative !important;
       inset: unset !important;
       height: auto !important;
@@ -5265,14 +5265,14 @@
     }
     /* Funnels same fix */
     #funnels-table td:nth-child(3),
-    #funnels-table td:nth-child(5),
-    #funnels-table td:nth-child(7) {
+    #funnels-table td:nth-child(6), #funnels-table td:nth-child(7),
+    #funnels-table td:nth-child(9) {
       height: 52px !important;
       overflow: hidden !important;
     }
     #funnels-table td:nth-child(3) textarea,
-    #funnels-table td:nth-child(5) textarea,
-    #funnels-table td:nth-child(7) textarea {
+    #funnels-table td:nth-child(6) textarea, #funnels-table td:nth-child(7) textarea,
+    #funnels-table td:nth-child(9) textarea {
       position: absolute !important;
       inset: 0 !important;
       width: 100% !important;
@@ -5295,8 +5295,8 @@
     body.force-dark #ads-table td:nth-child(5) textarea,
     body.force-dark #ads-table td:nth-child(6) textarea,
     body.force-dark #funnels-table td:nth-child(3) textarea,
-    body.force-dark #funnels-table td:nth-child(5) textarea,
-    body.force-dark #funnels-table td:nth-child(7) textarea { color: #d4d4d8 !important; }
+    body.force-dark #funnels-table td:nth-child(6) textarea, body.force-dark #funnels-table td:nth-child(7) textarea,
+    body.force-dark #funnels-table td:nth-child(9) textarea { color: #d4d4d8 !important; }
     /* overflow:hidden on any ancestor kills position:sticky — use clip instead */
     .ds-main,
     .container { overflow-x: clip !important; }
@@ -7013,7 +7013,7 @@
       <div class="table-scroll">
         <table id="funnels-table"><thead><tr>
           <th class="num-col frozen-num">#</th><th>Link</th>
-          <th>Offer</th><th>In Everflow?</th><th>Geo</th><th>Traffic Source</th><th>Funnel Type</th>
+          <th>Offer</th><th>In Everflow?</th><th>Offer Link</th><th>Offer ID</th><th>Geo</th><th>Traffic Source</th><th>Funnel Type</th>
           <th>Notes</th>
           <th class="remove-col"></th>
         </tr></thead><tbody id="funnels-body"></tbody></table>
@@ -7517,10 +7517,12 @@ function buildFunnelsGrid() {
     const linkUrl = getLinkHref(tds[1]);
     const advertiser = getText(tds[2]); // 'offer' column
     const efSel = tds[3]?.querySelector('select');
-    const geo = getText(tds[4]);
-    const sourceSel = tds[5]?.querySelector('select');
-    const funnelSel = tds[6]?.querySelector('select');
-    const obs = getText(tds[7]);
+    const efLink = getLinkHref(tds[4]);
+    const efId = getText(tds[5]);
+    const geo = getText(tds[6]);
+    const sourceSel = tds[7]?.querySelector('select');
+    const funnelSel = tds[8]?.querySelector('select');
+    const obs = getText(tds[9]);
     const efv = efSel?.value || '';
     const efc = efv === 'ef-yes' ? {bg:'#DCFCE7',color:'#166534'} : {bg:'#FEE2E2',color:'#B91C1C'};
     const efChipHtml = efv ? `<span style="background:${efc.bg};color:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
@@ -7557,7 +7559,7 @@ function buildFunnelsGrid() {
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Traffic source</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${sourceChipHtml}
-        <select data-row="${idx}" data-table="funnels-body" data-tdidx="6"
+        <select data-row="${idx}" data-table="funnels-body" data-tdidx="8"
           onchange="gridChipEdit(this)"
           style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
         >${sourceOpts}</select>
@@ -7567,7 +7569,7 @@ function buildFunnelsGrid() {
       <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Funnel type</div>
       <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
         ${funnelChipHtml}
-        <select data-row="${idx}" data-table="funnels-body" data-tdidx="7"
+        <select data-row="${idx}" data-table="funnels-body" data-tdidx="9"
           onchange="gridChipEdit(this)"
           style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
         >${funnelOpts}</select>
@@ -7588,8 +7590,10 @@ function buildFunnelsGrid() {
         ${sourceChip}
         ${typeChip}
         ${efChip}
-        ${gfField('Geo', geo, 'td:nth-child(5)', idx, 'funnels-body')}
-        ${gfField('Notes', obs, 'td:nth-child(8)', idx, 'funnels-body')}
+        ${gfField('Offer ID', efId, 'td:nth-child(6)', idx, 'funnels-body')}
+        ${efLink ? `<div style="font-size:12px;padding:2px 0 6px;" onclick="event.stopPropagation()"><a href="${efLink}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;">Open in Everflow ↗</a></div>` : ''}
+        ${gfField('Geo', geo, 'td:nth-child(7)', idx, 'funnels-body')}
+        ${gfField('Notes', obs, 'td:nth-child(10)', idx, 'funnels-body')}
         <div style="padding-top:6px;border-top:1px solid var(--border-light);margin-top:4px;display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()">
           ${linkUrl
             ? `<a href="${linkUrl}" target="_blank" rel="noopener" style="color:var(--accent,#4A90D9);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:3px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9"/><path d="M10 2h4v4M14 2 8 8" stroke-linecap="round" stroke-linejoin="round"/></svg>Funnel link</a>`
@@ -8762,10 +8766,12 @@ function openFunnelDetail(rowIdx) {
   const tds           = tr.querySelectorAll('td');
   const linkUrl       = _adpGetLink(tds[1]);
   const advertiser    = _adpGetText(tds[2]) || '(no offer)';
-  const geo           = _adpGetText(tds[4]);
-  const trafficSource = _adpGetSelect(tds[5]) || _adpGetBadgeText(tds[5]) || '';
-  const funnelType    = _adpGetSelect(tds[6]) || _adpGetBadgeText(tds[6]) || '';
-  const obs           = _adpGetText(tds[7]);
+  const efLink        = _adpGetLink(tds[4]);
+  const efId          = _adpGetText(tds[5]);
+  const geo           = _adpGetText(tds[6]);
+  const trafficSource = _adpGetSelect(tds[7]) || _adpGetBadgeText(tds[7]) || '';
+  const funnelType    = _adpGetSelect(tds[8]) || _adpGetBadgeText(tds[8]) || '';
+  const obs           = _adpGetText(tds[9]);
 
   const sourceChip = _adpChip(trafficSource, _ADP_SOURCE_COLORS);
   const funnelChip = _adpChip(funnelType, _ADP_FUNNEL_COLORS);
@@ -8774,8 +8780,8 @@ function openFunnelDetail(rowIdx) {
   const SOURCE_OPTS = [['','— select —'],['meta','Meta'],['tiktok','TikTok'],['google','Google'],['native','Native'],['youtube','YouTube'],['pinterest','Pinterest'],['snapchat','Snapchat'],['twitter','Twitter/X'],['linkedin','LinkedIn'],['reddit','Reddit'],['email','Email'],['sms','SMS'],['push','Push Notifications'],['in-app-dsp','In-App DSP'],['programmatic','Programmatic/DSP'],['outbrain','Outbrain'],['mgid','MGID'],['taboola','Taboola'],['revcontent','RevContent']];
   const FUNNEL_TYPE_OPTS = [['','— select —'],['quiz','Quiz'],['landing-page','Landing Page'],['vsl','VSL'],['lead-gen','Lead Gen'],['multi-step','Multi-Step'],['advertorial','Advertorial'],['comparison','Comparison'],['checkout-page','Checkout Page']];
   const everflowVal      = _adpGetSelectVal(tds[3]) || '';
-  const trafficSourceVal = _adpGetSelectVal(tds[5]) || '';
-  const funnelTypeVal    = _adpGetSelectVal(tds[6]) || '';
+  const trafficSourceVal = _adpGetSelectVal(tds[7]) || '';
+  const funnelTypeVal    = _adpGetSelectVal(tds[8]) || '';
 
   const body = `
     <div class="adp-section">
@@ -8783,20 +8789,22 @@ function openFunnelDetail(rowIdx) {
       <div class="adp-card">
         ${_adpEditRow('Offer', advertiser, 2)}
         ${_adpSelectRow('In Everflow?', everflowVal, [['','— select —'],['ef-yes','Yes'],['ef-no','No']], 3, {'yes':{'bg':'#DCFCE7','color':'#166534'},'no':{'bg':'#FEE2E2','color':'#B91C1C'}})}
-        ${_adpEditRow('Geo', geo, 4)}
-        ${_adpSelectRow('Traffic Source', trafficSourceVal, SOURCE_OPTS, 5, _ADP_SOURCE_COLORS)}
-        ${_adpSelectRow('Funnel Type', funnelTypeVal, FUNNEL_TYPE_OPTS, 6, _ADP_FUNNEL_COLORS)}
+        ${_adpEditRow('Offer ID', efId, 5)}
+        ${_adpEditRow('Geo', geo, 6)}
+        ${_adpSelectRow('Traffic Source', trafficSourceVal, SOURCE_OPTS, 7, _ADP_SOURCE_COLORS)}
+        ${_adpSelectRow('Funnel Type', funnelTypeVal, FUNNEL_TYPE_OPTS, 8, _ADP_FUNNEL_COLORS)}
       </div>
     </div>
     <div class="adp-section">
       <div class="adp-section-header"><div class="adp-section-title">Links</div></div>
       <div class="adp-lp-card">
         ${_adpLpRow(linkUrl,'Funnel URL',_lpIcons.funnel,'var(--teal-bg)',null,1)}
+        ${_adpLpRow(efLink,'Everflow offer',_lpIcons.lp,'var(--teal-bg)',null,4)}
       </div>
     </div>
     <div class="adp-section">
       <div class="adp-section-header"><div class="adp-section-title">Notes</div></div>
-      <div class="adp-copy-block" data-field="obs" data-td="7" contenteditable="false" style="min-height:60px;">${obs || '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
+      <div class="adp-copy-block" data-field="obs" data-td="9" contenteditable="false" style="min-height:60px;">${obs || '<span class=\"adp-copy-placeholder\">Add notes…</span>'}</div>
     </div>
   `;
   _adpOpen(advertiser, '', body);
@@ -10105,6 +10113,24 @@ function funnelRow(n) {
       </select>
       <div class="sel-display"><span class="sel-badge">— select —</span><span class="sel-arrow">▾</span></div>
     </div></td>
+    <td class="link-cell"><div class="link-chip-wrap">
+      <div class="link-chip-wrap-display">
+        <a class="link-chip" href="#" target="_blank" style="display:none">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M7 3H3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1V9M9 1h6m0 0v6m0-6L7 9" stroke="#4A90D9" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="link-chip-text"></span>
+        </a>
+        <button class="link-chip-edit-icon" onclick="startLinkEdit(this)" title="Edit link">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 0 1 2 2L5 13H3v-2L11.5 2.5Z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="link-chip-empty" onclick="startLinkEdit(this)">+ Add link</span>
+      </div>
+      <div class="link-input-wrap">
+        <input class="link-input-field" type="url" placeholder="https://...">
+        <button class="link-save-btn" onclick="saveLinkChip(this)">Save</button>
+        <button class="link-cancel-btn" onclick="cancelLinkEdit(this)">✕</button>
+      </div>
+    </div></td>
+    <td><textarea placeholder="e.g. 9406" oninput="autoGrow(this);scheduleSave()"></textarea></td>
     <td><textarea placeholder="e.g. US, UK" oninput="autoGrow(this);scheduleSave()"></textarea></td>
     <td><div class="sel-wrap">
       <select onchange="updateBadge(this);scheduleSave()">
@@ -10480,7 +10506,13 @@ function restoreColWidths(cloudData) {
       let w = data[id];
       // Funnels: 'In Everflow?' moved from after Notes to after Offer — remap widths saved with the old order
       if (id === 'funnels-table' && !w._v) {
-        const map = {0:0,1:1,2:2,3:4,4:5,5:6,6:7,7:3,8:8}; const nw = {};
+        const map = {0:0,1:1,2:2,3:4,4:5,5:6,6:7,7:3,8:8}; const nw = {_v:2};
+        Object.keys(map).forEach(o => { if (w[o] && w[o] !== '0px') nw[map[o]] = w[o]; });
+        w = nw;
+      }
+      // Funnels: 'Offer Link' + 'Offer ID' inserted after 'In Everflow?' — shift widths saved before them
+      if (id === 'funnels-table' && w._v === 2) {
+        const map = {0:0,1:1,2:2,3:3,4:6,5:7,6:8,7:9,8:10}; const nw = {};
         Object.keys(map).forEach(o => { if (w[o] && w[o] !== '0px') nw[map[o]] = w[o]; });
         w = nw;
       }
@@ -10887,11 +10919,11 @@ function _collectDataInner() {
       mediaTakeawaysH: document.getElementById('notes-card-media-takeaways')?.style.height || '',
       mediaActionsH: document.getElementById('notes-card-media-actions')?.style.height || '',
     },
-    colWidths: (function() { const d={}; document.querySelectorAll('table').forEach(t => { const id=t.id||'table'; d[id]={}; t.querySelectorAll('thead th').forEach((th,i)=>{ if(th.style.width) d[id][i]=th.style.width; }); if(t.style.width) d[id]['_tableW']=t.style.width; if(id==='funnels-table') d[id]['_v']=2; }); return d; })(),
+    colWidths: (function() { const d={}; document.querySelectorAll('table').forEach(t => { const id=t.id||'table'; d[id]={}; t.querySelectorAll('thead th').forEach((th,i)=>{ if(th.style.width) d[id][i]=th.style.width; }); if(t.style.width) d[id]['_tableW']=t.style.width; if(id==='funnels-table') d[id]['_v']=3; }); return d; })(),
     rowHeights: (function() { const d={}; document.querySelectorAll('table').forEach(t => { const id=t.id||'table'; d[id]={}; t.querySelectorAll('tbody tr').forEach((tr,i)=>{ if(tr.style.height) d[id][i]=tr.style.height; }); }); return d; })(),
     traffic: collectTable('traffic-body', ['num','source','geo','qty','type','notes']),
     ads: collectTable('ads-body', ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']),
-    funnels: collectTable('funnels-body', ['num','link','advertiser','everflow','geo','trafficSource','type','obs']),
+    funnels: collectTable('funnels-body', ['num','link','advertiser','everflow','efLink','efId','geo','trafficSource','type','obs']),
     savedSites: JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}'),
   };
 }
@@ -10969,7 +11001,7 @@ function restoreData(data) {
   });
   restoreTable('traffic-body', data.traffic||[], trafficRow, ['num','source','geo','qty','type','notes']);
   restoreTable('ads-body', data.ads||[], adsRow, ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']);
-  restoreTable('funnels-body', data.funnels||[], funnelRow, ['num','link','advertiser','everflow','geo','trafficSource','type','obs']);
+  restoreTable('funnels-body', data.funnels||[], funnelRow, ['num','link','advertiser','everflow','efLink','efId','geo','trafficSource','type','obs']);
   if (data.savedSites) {
     try { localStorage.setItem('ecoverage_saved_sites', JSON.stringify(data.savedSites)); } catch(e) {}
   }
@@ -11312,7 +11344,7 @@ function exportCSV() {
   const tables = [
     { id: 'ads-body',     name: 'Top Ads',             headers: ['#','Offer','Traffic Source','Format','Geo','Lifecycle','Landing Page','Fan Page','Spy Tool','Creative','Angle / Hook','Headline','CTA','Title','Impressions','Notes'] },
     { id: 'traffic-body', name: 'Top Traffic Channels',  headers: ['#','Source','Geo','Qty','Traffic Type','Notes'] },
-    { id: 'funnels-body', name: 'Top Funnels',          headers: ['#','Link','Offer','In Everflow?','Geo','Traffic Source','Funnel Type','Notes'] },
+    { id: 'funnels-body', name: 'Top Funnels',          headers: ['#','Link','Offer','In Everflow?','Offer Link','Offer ID','Geo','Traffic Source','Funnel Type','Notes'] },
   ];
   let csv = '';
   tables.forEach(t => {
