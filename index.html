@@ -780,6 +780,8 @@
     .badge-display        { background: #FDF4FF; color: #7E22CE; }
     /* funnel type */
     .badge-quiz           { background: #FEF9C3; color: #854D0E; }
+    .badge-ef-yes         { background: #DCFCE7; color: #166534; }
+    .badge-ef-no          { background: #FEE2E2; color: #B91C1C; }
     .badge-landing-page   { background: #EFF6FF; color: #1e40af; }
     .badge-vsl            { background: #FEE2E2; color: #B91C1C; }
     .badge-lead-gen       { background: #D1FAE5; color: #065F46; }
@@ -1916,6 +1918,8 @@
     body.force-dark .badge-organic-social { background: #14352b; color: #6ee7b7; }
     body.force-dark .badge-display     { background: #2e1a4e; color: #c4b5fd; }
     body.force-dark .badge-quiz        { background: #3d2b0a; color: #fcd34d; }
+    body.force-dark .badge-ef-yes      { background: #0f2e1c; color: #86efac; }
+    body.force-dark .badge-ef-no       { background: #3b1111; color: #fca5a5; }
     body.force-dark .badge-landing-page { background: #1e3a5f; color: #93c5fd; }
     body.force-dark .badge-vsl         { background: #3d150a; color: #fca5a5; }
     body.force-dark .badge-lead-gen    { background: #14352b; color: #6ee7b7; }
@@ -7010,7 +7014,7 @@
         <table id="funnels-table"><thead><tr>
           <th class="num-col frozen-num">#</th><th>Link</th>
           <th>Offer</th><th>Geo</th><th>Traffic Source</th><th>Funnel Type</th>
-          <th>Notes</th>
+          <th>Notes</th><th>In Everflow?</th>
           <th class="remove-col"></th>
         </tr></thead><tbody id="funnels-body"></tbody></table>
       </div>
@@ -7516,6 +7520,21 @@ function buildFunnelsGrid() {
     const sourceSel = tds[4]?.querySelector('select');
     const funnelSel = tds[5]?.querySelector('select');
     const obs = getText(tds[6]);
+    const efSel = tds[7]?.querySelector('select');
+    const efv = efSel?.value || '';
+    const efc = efv === 'ef-yes' ? {bg:'#DCFCE7',color:'#166534'} : {bg:'#FEE2E2',color:'#B91C1C'};
+    const efChipHtml = efv ? `<span style="background:${efc.bg};color:${efc.color};border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;letter-spacing:0.02em;white-space:nowrap;">${efv === 'ef-yes' ? 'Yes' : 'No'}</span>` : '<span style="opacity:0.4;font-size:10px;">— none —</span>';
+    const efOpts = efSel ? Array.from(efSel.options).map(o => `<option value="${o.value}"${o.selected?' selected':''}>${o.text}</option>`).join('') : '';
+    const efChip = efSel ? `<div style="font-size:13px;line-height:1.4;margin-bottom:0;padding:6px 0;flex-shrink:0;">
+      <div class="gc-field-label" style="color:#475569;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">In Everflow?</div>
+      <span style="position:relative;display:inline-flex;align-items:center;cursor:pointer;">
+        ${efChipHtml}
+        <select data-row="${idx}" data-table="funnels-body" data-tdidx="8"
+          onchange="gridChipEdit(this)"
+          style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;"
+        >${efOpts}</select>
+      </span>
+    </div>` : '';
     const FUNNEL_CHIP_COLORS = {
       'quiz':{'bg':'#EDE9FE','color':'#6D28D9'},'landing-page':{'bg':'#DBEAFE','color':'#1D4ED8'},
       'vsl':{'bg':'#FEE2E2','color':'#B91C1C'},'lead-gen':{'bg':'#D1FAE5','color':'#065F46'},
@@ -7568,6 +7587,7 @@ function buildFunnelsGrid() {
         <div class="grid-card-offer">${advertiser || '<span style="opacity:0.4">No advertiser</span>'}</div>
         ${sourceChip}
         ${typeChip}
+        ${efChip}
         ${gfField('Geo', geo, 'td:nth-child(4)', idx, 'funnels-body')}
         ${gfField('Notes', obs, 'td:nth-child(7)', idx, 'funnels-body')}
         <div style="padding-top:6px;border-top:1px solid var(--border-light);margin-top:4px;display:flex;align-items:center;gap:4px;" onclick="event.stopPropagation()">
@@ -8755,6 +8775,7 @@ function openFunnelDetail(rowIdx) {
   const FUNNEL_TYPE_OPTS = [['','— select —'],['quiz','Quiz'],['landing-page','Landing Page'],['vsl','VSL'],['lead-gen','Lead Gen'],['multi-step','Multi-Step'],['advertorial','Advertorial'],['comparison','Comparison'],['checkout-page','Checkout Page']];
   const trafficSourceVal = _adpGetSelectVal(tds[4]) || '';
   const funnelTypeVal    = _adpGetSelectVal(tds[5]) || '';
+  const everflowVal      = _adpGetSelectVal(tds[7]) || '';
 
   const body = `
     <div class="adp-section">
@@ -8764,6 +8785,7 @@ function openFunnelDetail(rowIdx) {
         ${_adpEditRow('Geo', geo, 3)}
         ${_adpSelectRow('Traffic Source', trafficSourceVal, SOURCE_OPTS, 4, _ADP_SOURCE_COLORS)}
         ${_adpSelectRow('Funnel Type', funnelTypeVal, FUNNEL_TYPE_OPTS, 5, _ADP_FUNNEL_COLORS)}
+        ${_adpSelectRow('In Everflow?', everflowVal, [['','— select —'],['ef-yes','Yes'],['ef-no','No']], 7, {'yes':{'bg':'#DCFCE7','color':'#166534'},'no':{'bg':'#FEE2E2','color':'#B91C1C'}})}
       </div>
     </div>
     <div class="adp-section">
@@ -10093,6 +10115,12 @@ function funnelRow(n) {
       <div class="sel-display"><span class="sel-badge">— select —</span><span class="sel-arrow">▾</span></div>
     </div></td>
     <td><textarea placeholder="Structure, copy, offer details..." oninput="autoGrow(this);scheduleSave()"></textarea></td>
+    <td><div class="sel-wrap">
+      <select onchange="updateBadge(this);scheduleSave()">
+        ${opt('','— select —')}${opt('ef-yes','Yes')}${opt('ef-no','No')}
+      </select>
+      <div class="sel-display"><span class="sel-badge">— select —</span><span class="sel-arrow">▾</span></div>
+    </div></td>
     <td class="remove-col"><div class="cell-actions"><span class="drag-handle" draggable="false">⠿</span><button class="dup-row-btn" title="Duplicate row" onclick="dupRow(this,'funnels-body')"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="9" height="9" rx="2"/><path d="M11 5V3a2 2 0 0 0-2-2H3a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/></svg></button><button class="remove-row-btn" onclick="removeRow(this,'funnels-body')">×</button></div><div class="comment-popup"><textarea placeholder="Add a note or comment..."></textarea><div class="comment-popup-footer"><button onclick="closeComment(this)">Cancel</button><button class="primary" onclick="saveComment(this)">Save</button></div></div></td>
   </tr>`;
 }
@@ -10227,6 +10255,8 @@ const MIN_TA_W = 120;
 
 const BADGE_LABELS = {
   '': '— select —',
+  // In Everflow?
+  'ef-yes': 'Yes', 'ef-no': 'No',
   // Traffic Channel
   'meta': 'Meta', 'tiktok': 'TikTok', 'google': 'Google', 'native': 'Native',
   'youtube': 'YouTube', 'pinterest': 'Pinterest', 'snapchat': 'Snapchat',
@@ -10854,7 +10884,7 @@ function _collectDataInner() {
     rowHeights: (function() { const d={}; document.querySelectorAll('table').forEach(t => { const id=t.id||'table'; d[id]={}; t.querySelectorAll('tbody tr').forEach((tr,i)=>{ if(tr.style.height) d[id][i]=tr.style.height; }); }); return d; })(),
     traffic: collectTable('traffic-body', ['num','source','geo','qty','type','notes']),
     ads: collectTable('ads-body', ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']),
-    funnels: collectTable('funnels-body', ['num','link','advertiser','geo','trafficSource','type','obs']),
+    funnels: collectTable('funnels-body', ['num','link','advertiser','geo','trafficSource','type','obs','everflow']),
     savedSites: JSON.parse(localStorage.getItem('ecoverage_saved_sites') || '{}'),
   };
 }
@@ -10932,7 +10962,7 @@ function restoreData(data) {
   });
   restoreTable('traffic-body', data.traffic||[], trafficRow, ['num','source','geo','qty','type','notes']);
   restoreTable('ads-body', data.ads||[], adsRow, ['num','offer','channel','format','geo','lifecycle','landingPage','spyLink','fanPage','creative','angle','headline','cta','title','imp','notes']);
-  restoreTable('funnels-body', data.funnels||[], funnelRow, ['num','link','advertiser','geo','trafficSource','type','obs']);
+  restoreTable('funnels-body', data.funnels||[], funnelRow, ['num','link','advertiser','geo','trafficSource','type','obs','everflow']);
   if (data.savedSites) {
     try { localStorage.setItem('ecoverage_saved_sites', JSON.stringify(data.savedSites)); } catch(e) {}
   }
