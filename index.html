@@ -7178,7 +7178,15 @@ const _basePath = (() => { const seg = location.pathname.split('/').filter(Boole
 const _hostPath = (location.hostname + _basePath).replace(/\/$/, '');
 const _urlBin = new URLSearchParams(location.search).get('bin') || '';
 // ── Slug routing disabled ──
-const _initialUrlSlug = '';
+// ── Capture slug from URL immediately — before runPostInit can overwrite pathname ──
+const _initialUrlSlug = (function() {
+  const params = new URLSearchParams(location.search);
+  const offerParam = params.get('offer');
+  if (offerParam) return offerParam;
+  const pathSlug = location.pathname.replace(_basePath, '').replace(/\.html$/, '').split('/').filter(Boolean)[0];
+  if (pathSlug && !pathSlug.includes('.')) return pathSlug;
+  return '';
+})();
 // Captured once, here, before anything else in the app has a chance to rewrite the
 // URL (e.g. runPostInit calling updateOfferSlugPath while _currentTab is still its
 // default). restoreTabFromUrl() must read from this frozen value, never from a live
@@ -11801,7 +11809,8 @@ async function offerLoadAll() {
 
   // If table empty AND no URL slug, auto-save current page as first offer
   const _initUrlParams = new URLSearchParams(location.search);
-  const _initSlug = _initUrlParams.get('offer') || (location.pathname.replace(_basePath, '').replace(/\.html$/, '').split('/').filter(Boolean)[0]) || '';
+  // Read the slug frozen at page start: by now runPostInit may already have rewritten the path to the cached offer
+  const _initSlug = _initialUrlSlug;
   if (_allOffers.length === 0 && !_initSlug) {
     const title = (document.getElementById('main-title')?.dataset?.text || '').trim();
     if (title && title !== '—') {
@@ -11824,7 +11833,7 @@ async function offerLoadAll() {
   // Restore last selected — the URL's own slug wins if it matches a real offer,
   // since otherwise the cached "last viewed" offer always overrides the link
   // someone actually opened (this was the bug: a slug was computed but never checked).
-  const slugMatch = _initSlug && _allOffers.find(o => offerSlugFromTitle(o.name) === _initSlug);
+  const slugMatch = _initSlug && _allOffers.find(o => offerSlugFromTitle(o.name) === _initSlug.toLowerCase().trim());
   if (slugMatch) {
     if (window._loaderSetStatus) window._loaderSetStatus('Fetching data...');
     await offerLoad(slugMatch.id, false);
