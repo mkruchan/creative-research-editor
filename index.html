@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://vdannnwpikfipdamphlu.supabase.co wss://vdannnwpikfipdamphlu.supabase.co https://api.cloudinary.com https://mykytak.app.n8n.cloud; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Multi-Platform Creative Research</title>
   <script>
@@ -1364,7 +1366,7 @@
 
 </style>
   <!-- Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/creative-research-editor/vendor/supabase-js-2.117.2/supabase.js"></script>
   <style>
     /* ── Offer picker buttons ── */
     #offer-select option { font-size: 14px; font-weight: 500; }
@@ -6611,7 +6613,7 @@
       <button class="md-btn" onclick="sbModalClose()">Cancel</button>
       <button class="md-btn md-btn--primary" id="sb-connect-btn" onclick="sbSaveConfig()" disabled style="opacity:0.5;cursor:default;">Connect &amp; Save</button>
     </div>
-    <div class="md-section-divider">
+    <div class="md-section-divider" hidden>
       <div class="md-section-header">
         <span class="md-section-label">☁️ JSONBin Backup</span>
         <span class="md-badge md-badge--amber">BACKUP</span>
@@ -7179,8 +7181,8 @@
 <script>
 
 // Master directory bin — stores {_directory: {url: binId}} for all sites
-const MASTER_BIN_ID = '69fb9158adc21f119a6273c4';
-const MASTER_API_KEY = '$2a$10$IecvGoWgfhfhPACcMbpQ1ePIEi423.hKIhOwKhAlyX3ARia6WvXt6';
+const MASTER_BIN_ID = '';   // JSONBin retired 2026-10-16 (key was public); data backed up in research-data/jsonbin-backup
+const MASTER_API_KEY = '';
 
 // ── Restore path encoded by 404.html (GitHub Pages SPA routing) ──
 (function() {
@@ -7227,6 +7229,7 @@ let BIN_ID  = _urlBin || '';
 let API_KEY = MASTER_API_KEY;
 
 async function loadDirectory() {
+  if (!MASTER_API_KEY) return {};
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
@@ -7244,6 +7247,7 @@ async function loadDirectory() {
 }
 
 async function saveDirectory(dir) {
+  if (!MASTER_API_KEY) return;
   try {
     // Read current master bin, update _directory, write back
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
@@ -7261,6 +7265,7 @@ async function saveDirectory(dir) {
 }
 
 async function loadSbCreds() {
+  if (!MASTER_API_KEY) return null;
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
@@ -7272,6 +7277,7 @@ async function loadSbCreds() {
 }
 
 async function saveSbCreds(url, key) {
+  if (!MASTER_API_KEY) return;
   try {
     const res = await fetch(`https://api.jsonbin.io/v3/b/${MASTER_BIN_ID}/latest`, {
       headers: { 'X-Master-Key': MASTER_API_KEY }
@@ -11723,7 +11729,7 @@ function sbGetClient() {
   const url = localStorage.getItem(SB_URL_KEY);
   const key = localStorage.getItem(SB_KEY_KEY);
   if (!url || !key) return null;
-  try { _sbClient = supabase.createClient(url, key); return _sbClient; }
+  try { _sbClient = supabase.createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false, storageKey: 'cr-editor-auth' } }); return _sbClient; }
   catch(e) { console.error('Supabase init:', e); return null; }
 }
 
@@ -12205,7 +12211,9 @@ function offerRename() {
           return;
         }
         const savedAt = new Date().toISOString();
-        await sb.from('offers').update({ data: pageData, updated_at: savedAt }).eq('id', _currentOfferId);
+        const { data: savedRows, error: saveErr } = await sb.from('offers').update({ data: pageData, updated_at: savedAt }).eq('id', _currentOfferId).select('id');
+        if (saveErr) throw saveErr;
+        if (!savedRows || !savedRows.length) { authEnsure(sb); throw new Error('the database did not accept it. Sign in again'); }
         // Final check: if sequence changed while Supabase was writing, schedule one more save
         if (_saveSeq !== seqAtSaveStart) {
           console.log('[save] seq changed during write — scheduling follow-up save');
@@ -12228,7 +12236,7 @@ function offerRename() {
           const t = new Date().toLocaleTimeString(undefined,{hour:'2-digit',minute:'2-digit'});
           setStatus(ok ? 'saved' : 'error', ok ? '☁️ Backup saved · ' + t : '⚠️ Save failed');
         } else {
-          setStatus('error', '⚠️ Supabase failed — check connection');
+          setStatus('error', '⚠️ Not saved — ' + ((e && e.message) || 'check connection'));
         }
       } finally {
         _saveInFlight = false;
@@ -12256,6 +12264,10 @@ function offerRename() {
   localStorage.setItem(SB_KEY_KEY, key);
   document.getElementById('sb-url-input').value = url;
   document.getElementById('sb-key-input').value = key;
+  // the sign-in card and authEnsure() come later in the page
+  if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  const sbAuth = sbGetClient();
+  if (sbAuth) await authEnsure(sbAuth);   // nothing loads or saves until the editor is signed in
   await offerLoadAll();
 })();
 
@@ -12706,7 +12718,7 @@ document.addEventListener('click', function(e) {
     }
   }, true);
 </script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/style.css">
+<link rel="stylesheet" href="/creative-research-editor/vendor/n8n-chat-1.41.1/style.css">
 <style>
   :root { --chat--color-primary: #2563eb; --chat--color-primary-shade-50: #1d4ed8; --chat--color-primary-shade-100: #1e40af;
           --chat--toggle--background: #2563eb; --chat--toggle--hover--background: #1d4ed8; --chat--window--width: 420px;
@@ -12716,7 +12728,7 @@ document.addEventListener('click', function(e) {
 <!-- SQL agent (n8n "Creative Research – SQL Agent"): full data incl. Everflow payouts, so it is password protected.
      The password is asked once and kept only in this browser (localStorage), never in the page source. -->
 <script type="module">
-  import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat@1.41.1/dist/chat.bundle.es.js';
+  import { createChat } from '/creative-research-editor/vendor/n8n-chat-1.41.1/chat.bundle.es.js';
   const KEY = 'cr_sql_agent_auth';
   let auth = null;
   try { auth = localStorage.getItem(KEY); } catch (e) {}
@@ -12746,6 +12758,91 @@ document.addEventListener('click', function(e) {
     };
     document.body.appendChild(b);
   }
+</script>
+<!-- Sign-in (Supabase Auth, 6-digit email code). The research tables only accept writes from a signed-in
+     editor listed in public.research_editors (RLS), so the public key in this page can no longer change data. -->
+<style>
+  .auth-overlay { position: fixed; inset: 0; z-index: 100000; display: grid; place-items: center; padding: 16px;
+    background: color-mix(in srgb, var(--bg-primary, #f8fafc) 82%, transparent); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .auth-overlay[hidden] { display: none; }
+  .auth-card { width: min(380px, 100%); padding: 24px; border-radius: 16px; background: var(--surface, #fff);
+    border: 1px solid var(--border-light, #e5e7eb); box-shadow: var(--shadow-lg, 0 20px 50px rgba(0,0,0,.15)); display: flex; flex-direction: column; gap: 12px; }
+  .auth-card h2 { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary, #111827); letter-spacing: -0.01em; }
+  .auth-sub { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-secondary, #6b7280); }
+  .auth-card label { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-secondary, #6b7280); }
+  .auth-card input { height: 40px; padding: 0 12px; border-radius: 10px; border: 1px solid var(--border-light, #e5e7eb);
+    background: var(--bg-tertiary, #f3f4f6); color: var(--text-primary, #111827); font: inherit; font-size: 14px; outline: none; }
+  .auth-card input:focus { border-color: var(--accent, #2563eb); box-shadow: 0 0 0 3px var(--accent-muted, rgba(37,99,235,.15)); }
+  .auth-card button { height: 40px; border: 0; border-radius: 10px; background: var(--accent, #2563eb); color: #fff; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .auth-card button:disabled { opacity: .6; cursor: default; }
+  .auth-msg { margin: 0; min-height: 18px; font-size: 12.5px; color: var(--text-secondary, #6b7280); }
+  .auth-msg.is-error { color: var(--red-text, #b91c1c); }
+</style>
+<div class="auth-overlay" id="auth-overlay" hidden>
+  <form class="auth-card" id="auth-form" novalidate>
+    <h2>Sign in to edit</h2>
+    <p class="auth-sub">Enter your email and we'll send you a 6-digit code. You stay signed in on this browser.</p>
+    <label>Email <input id="auth-email" type="email" autocomplete="email" required></label>
+    <label id="auth-code-row" hidden>Code from the email <input id="auth-code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10"></label>
+    <button type="submit" id="auth-btn">Send code</button>
+    <p class="auth-msg" id="auth-msg" role="status" aria-live="polite"></p>
+  </form>
+</div>
+<script>
+  // authEnsure(sb): resolves with a session; shows the sign-in card until there is one.
+  let _authWaiters = null;
+  async function authEnsure(sb) {
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) return data.session;
+    if (_authWaiters) return new Promise(r => _authWaiters.push(r));
+    _authWaiters = [];
+    return new Promise(resolve => {
+      _authWaiters.push(resolve);
+      const ov = document.getElementById('auth-overlay'), form = document.getElementById('auth-form');
+      const email = document.getElementById('auth-email'), code = document.getElementById('auth-code');
+      const codeRow = document.getElementById('auth-code-row'), btn = document.getElementById('auth-btn'), msg = document.getElementById('auth-msg');
+      const say = (t, err) => { msg.textContent = t; msg.classList.toggle('is-error', !!err); };
+      try { email.value = localStorage.getItem('cr_editor_email') || ''; } catch (e) {}
+      let sent = false;
+      ov.hidden = false;
+      (email.value ? (codeRow.hidden ? email : code) : email).focus();
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        const addr = email.value.trim().toLowerCase();
+        if (!addr) { say('Enter your email.', true); return; }
+        btn.disabled = true;
+        try {
+          if (!sent) {
+            say('Sending…');
+            const { error } = await sb.auth.signInWithOtp({ email: addr, options: { shouldCreateUser: false } });
+            if (error) throw error;
+            sent = true; codeRow.hidden = false; btn.textContent = 'Sign in'; code.focus();
+            try { localStorage.setItem('cr_editor_email', addr); } catch (e2) {}
+            say('Code sent to ' + addr + '. It can take a minute.');
+          } else {
+            const token = code.value.replace(/\s+/g, '');
+            if (!token) { say('Enter the code from the email.', true); return; }
+            say('Checking…');
+            const { data: v, error } = await sb.auth.verifyOtp({ email: addr, token, type: 'email' });
+            if (error) throw error;
+            ov.hidden = true; say(''); code.value = '';
+            const ws = _authWaiters; _authWaiters = null; ws.forEach(r => r(v.session));
+          }
+        } catch (err) {
+          say((err && err.message) || 'Something went wrong. Try again.', true);
+        } finally { btn.disabled = false; }
+      };
+    });
+  }
+  // signed out elsewhere or the session could not be refreshed: ask again before the next save
+  (function () {
+    const hook = () => {
+      const sb = typeof sbGetClient === 'function' && sbGetClient();
+      if (!sb) return setTimeout(hook, 500);
+      sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT') authEnsure(sb); });
+    };
+    hook();
+  })();
 </script>
 </body>
 </html>
