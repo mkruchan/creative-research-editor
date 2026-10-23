@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' https: data: blob:; media-src 'self' https: data: blob:; connect-src 'self' https://vdannnwpikfipdamphlu.supabase.co wss://vdannnwpikfipdamphlu.supabase.co https://api.cloudinary.com; frame-src 'none'; worker-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <link rel="preload" href="/creative-research-editor/vendor/manrope-5.3.0/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <style id="font-manrope">
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-editor/vendor/manrope-5.3.0/manrope-latin-wght-normal.woff2) format('woff2');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-editor/vendor/manrope-5.3.0/manrope-latin-ext-wght-normal.woff2) format('woff2');
+      unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF; }
+    @font-face { font-family: 'Manrope'; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/creative-research-editor/vendor/manrope-5.3.0/manrope-cyrillic-wght-normal.woff2) format('woff2');
+      unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116; }
+    body { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+    button, input, textarea, select { font-family: inherit; }
+  </style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Multi-Platform Creative Research</title>
   <script>
@@ -206,7 +217,7 @@
        BASE
     ═══════════════════════════════════════════════ */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
       background: #ffffff;
       color: var(--text-primary);
       min-height: 100vh;
@@ -3246,7 +3257,7 @@
     .section-title,
     .oc-label,
     .oc-meta-label {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
     }
     /* ═══════════════════════════════════════════════════════
        REFERENCE MATCH — CSS-only visual overrides
@@ -4329,7 +4340,7 @@
     /* ══ AD DETAIL PANEL — design polish ══ */
 
     /* Panel layout */
-    #ad-detail-panel { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
+    #ad-detail-panel { font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', -apple-system, sans-serif; }
 
     /* ── Scrollbars inside ad-detail-panel — match horizontal table-scroll style ── */
     #ad-detail-panel ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -5357,7 +5368,7 @@
       padding: 0 20px !important;
       font-size: 13px !important;
       font-weight: 500 !important;
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif !important;
       border: none !important;
       border-radius: 8px !important;
       cursor: pointer !important;
@@ -6827,7 +6838,7 @@
           <input type="hidden" id="meta-date">
         </div>
         <!-- Custom calendar popup — fixed position to escape card overflow -->
-        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:-apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
+        <div id="custom-cal" style="display:none;position:fixed;z-index:9999;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:14px;min-width:240px;font-family:'Manrope', -apple-system, BlinkMacSystemFont, 'SF Pro Text',sans-serif;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
             <button onclick="calNav(-1)" style="background:none;border:none;cursor:pointer;padding:4px 8px;border-radius:6px;font-size:16px;color:#475569;">‹</button>
             <span id="cal-month-label" style="font-size:13px;font-weight:600;color:#0f172a;"></span>
