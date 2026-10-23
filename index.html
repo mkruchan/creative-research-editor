@@ -6856,6 +6856,49 @@
     </div><!-- /.oc-meta -->
 
   </div><!-- /.ds-offer-card -->
+  <!-- ── Overview (shared, build/internal/overview_sections.html): what top partners earn, how to start, proven creatives ── -->
+  <section id="ov-snapshot" class="ov-sec" hidden aria-labelledby="ov-snapshot-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-snapshot-title">What top partners earn</h2></div>
+      <div class="ov-period" id="ov-snapshot-period"></div>
+    </div>
+    <div class="sn-list" id="ov-snapshot-list"></div>
+  </section>
+
+  <section id="ov-proven" class="ov-sec" hidden aria-labelledby="ov-proven-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-proven-title">Proven creatives</h2></div>
+    </div>
+    <div class="pc-grid" id="ov-proven-grid"></div>
+  </section>
+
+  <section id="ov-funnels" class="ov-sec" hidden aria-labelledby="ov-funnels-title">
+    <div class="ov-head">
+      <div><h2 class="ov-title" id="ov-funnels-title">Proven funnels</h2></div>
+    </div>
+    <div class="tf-grid" id="ov-funnels-list"></div>
+  </section>
+
+  <div class="fr-bar" id="fr-bar">
+    <div><b>Full research</b> <span class="fr-count" id="fr-count"></span></div>
+    <button type="button" id="fr-toggle" onclick="toggleFullResearch()" aria-expanded="false">Open full research</button>
+  </div>
+
+  <!-- How to start / What's working: part of Full research -->
+  <section id="insights" class="ins" style="display:none;">
+    <div class="ins-card ins-card--todo" id="ins-todo">
+      <div class="ins-head"><span class="ins-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><h2 class="ins-title">How to start</h2></div>
+      <ol class="ins-list"></ol>
+      <details class="ins-more"><summary>Read more</summary><div class="ins-full"></div></details>
+    </div>
+    <div class="ins-card ins-card--working" id="ins-working">
+      <div class="ins-head"><span class="ins-badge" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span><h2 class="ins-title">What's working</h2></div>
+      <ul class="ins-list"></ul>
+      <details class="ins-more"><summary>Read more</summary><div class="ins-full"></div></details>
+    </div>
+  </section>
+
+  <!-- /overview sections -->
   <div class="ic-grid" id="ic-grid-notes">
 
     <!-- ── Creative Takeaways card ── -->
@@ -10985,6 +11028,7 @@ function collectTable(id, keys) {
 }
 function restoreData(data) {
   if (!data) return false;
+  setTimeout(() => renderOverview(data), 0);
   if (data.header) {
     const h1 = document.getElementById('main-title');
     const t = data.header.title || ''; const tu = data.header.titleUrl || '';
@@ -12994,5 +13038,313 @@ document.addEventListener('click', function(e) {
   h1#main-title, .ds-top-header-title { letter-spacing: -0.02em !important; }
   td { font-variant-numeric: tabular-nums; }
 </style>
+<!-- overview: affiliate-first report page (owner, 2026-10-20). Shared by the affiliate site, the share copy and the editor:
+     offer snapshot with what the TOP partners earn (90 days, 100+ clicks, 10+ conversions; never named), payout range,
+     How to start / What's working, proven creatives, everything else behind "Full research". -->
+<style id="overview-css">
+  .ov-sec { margin: 0 0 20px; padding: 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); }
+  .ov-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .ov-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
+  .ov-sub, .ds-top-header-subtitle { display: none !important; }   /* no small text under the headers (owner, 2026-10-23) */
+  .ov-period { display: inline-flex; align-items: center; gap: 8px; padding: 7px 13px; border-radius: 999px; background: var(--blue-bg); color: var(--blue-text); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .sn-list { display: flex; flex-direction: column; gap: 14px; }
+  .sn-card { padding: 16px; border-radius: 12px; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); display: flex; flex-direction: column; gap: 14px; }
+  .sn-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .sn-name { font-size: 15px; font-weight: 600; color: var(--text-primary); line-height: 1.35; }
+  .sn-id { font-size: 12px; color: var(--text-muted); font-variant-numeric: tabular-nums; margin-left: 6px; font-weight: 500; }
+  .sn-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .sn-tag { font-size: 12px; font-weight: 500; border-radius: 999px; padding: 3px 10px; background: var(--bg-tertiary); color: var(--text-secondary); }
+  .sn-tag--amber { background: var(--amber-bg); color: var(--amber-text); } .sn-tag--purple { background: var(--purple-bg); color: var(--purple-text); }
+  .sn-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .sn-tile { padding: 12px 14px; border-radius: 10px; background: var(--bg-tertiary); }
+  .sn-tile--hero { background: var(--teal-bg); }
+  .sn-tile-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+  .sn-tile-value { margin-top: 3px; font-size: 22px; font-weight: 650; letter-spacing: -0.01em; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+  .sn-tile--hero .sn-tile-value { color: var(--teal-text); }
+  .sn-tile-note { margin-top: 3px; font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
+  .sn-avg { font-size: 12.5px; line-height: 1.5; color: var(--text-secondary); margin: 0; }
+  .sn-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .sn-open { display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 600; font-size: 14px; text-decoration: none; }
+  .sn-open:hover { background: var(--accent-hover, #1d4ed8); }
+  .sn-trust { font-size: 12px; color: var(--text-muted); }
+  /* ad and funnel cards are the same size: same column width, square preview (owner, 2026-10-23) */
+  .pc-grid, .tf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+  .pc-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; text-align: left; padding: 0; font: inherit; color: inherit; transition: box-shadow .15s, transform .15s; }
+  .pc-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .pc-media { position: relative; aspect-ratio: 1 / 1; background: var(--bg-tertiary); display: grid; place-items: center; overflow: hidden; }
+  /* video ads: a play sign on the preview */
+  .pc-play { position: absolute; left: 10px; bottom: 10px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px 4px 7px; border-radius: 999px;
+    background: rgba(0,0,0,.62); color: #fff; font-size: 11.5px; font-weight: 600; pointer-events: none; }
+  .pc-play svg { width: 12px; height: 12px; }
+  .pc-media img, .pc-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pc-body, .tf-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .pc-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pc-chip, .tf-chip { font-size: 11.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; white-space: nowrap;
+    --c: #64748b; background: color-mix(in srgb, var(--c) 13%, transparent); color: color-mix(in srgb, var(--c) 88%, #000); }
+  body.force-dark .pc-chip, body.force-dark .tf-chip { background: color-mix(in srgb, var(--c) 26%, transparent); color: color-mix(in srgb, var(--c) 55%, #fff); }
+  /* channels */
+  .ovc-meta { --c: #2563eb; } .ovc-facebook { --c: #2563eb; } .ovc-instagram { --c: #c026d3; } .ovc-taboola { --c: #1e40af; }
+  .ovc-outbrain { --c: #ea580c; } .ovc-native { --c: #059669; } .ovc-mgid { --c: #db2777; } .ovc-revcontent { --c: #7c3aed; }
+  .ovc-newsbreak { --c: #e11d48; } .ovc-tiktok { --c: #111827; } .ovc-snapchat { --c: #ca8a04; } .ovc-google { --c: #16a34a; }
+  .ovc-search { --c: #16a34a; } .ovc-youtube { --c: #dc2626; } .ovc-pinterest { --c: #be123c; } .ovc-msn { --c: #0891b2; }
+  .ovc-email { --c: #0284c7; } .ovc-display { --c: #475569; } .ovc-twitter { --c: #0369a1; } .ovc-x { --c: #111827; }
+  /* formats */
+  .ovc-video { --c: #dc2626; } .ovc-static { --c: #0284c7; } .ovc-static-image { --c: #0284c7; } .ovc-image { --c: #0284c7; }
+  .ovc-native-article { --c: #65a30d; } .ovc-carousel { --c: #a21caf; } .ovc-gif { --c: #9333ea; }
+  /* funnel types */
+  .ovc-quiz { --c: #7c3aed; } .ovc-landing-page { --c: #2563eb; } .ovc-comparison { --c: #d97706; } .ovc-advertorial { --c: #db2777; }
+  .ovc-lead-gen { --c: #059669; } .ovc-vsl { --c: #dc2626; } .ovc-multi-step { --c: #4f46e5; } .ovc-direct-landing-page { --c: #2563eb; }
+  /* geo + days running */
+  .ovc-geo { --c: #0f766e; } .pc-chip--days { --c: #15803d; }
+  .pc-head { font-size: 13px; line-height: 1.4; color: var(--text-primary); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  /* funnel cards: page preview (daily screenshot in the media mirror, m/funnels/<preview>.jpg), domain, chips, links */
+  .tf-card { display: flex; flex-direction: column; border-radius: 12px; overflow: hidden; background: var(--bg-primary, #fff); border: 1px solid var(--border-light); cursor: pointer; transition: box-shadow .15s, transform .15s; }
+  .tf-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .tf-shot { position: relative; aspect-ratio: 1 / 1; background: var(--bg-tertiary); overflow: hidden; }
+  .tf-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+  .tf-shot-ph { position: absolute; inset: 0; display: none; place-items: center; font-size: 13px; font-weight: 600; color: var(--text-muted); padding: 12px; text-align: center; }
+  .tf-shot--none img { display: none; } .tf-shot--none .tf-shot-ph { display: grid; }
+  .tf-domain { font-size: 13px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tf-adv { font-size: 12.5px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tf-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .tf-actions, .pc-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+  .tf-open, .tf-ef, .tf-more, .pc-more { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 10px; border-radius: 8px;
+    font-size: 12.5px; font-weight: 600; white-space: nowrap; text-decoration: none; cursor: pointer;
+    border: 1px solid var(--border-mid, #d1d5db); background: var(--surface, #fff); color: var(--text-primary) !important; box-shadow: var(--shadow-xs, 0 1px 2px rgba(0,0,0,.05)); }
+  .tf-open:hover, .tf-more:hover, .pc-card:hover .pc-more { background: var(--bg-tertiary); }
+  .tf-ef { border-color: transparent; background: var(--accent, #2563eb); color: #fff !important; }
+  /* funnel card: Open page + More side by side, Everflow full width below; ad card: More */
+  .tf-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .tf-actions > * { justify-content: center; }
+  .tf-actions .tf-ef { grid-column: 1 / -1; order: 3; }
+  .tf-ef:hover { background: var(--accent-hover, #1d4ed8); }
+  .fr-bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 0 0 20px; padding: 14px 18px; border-radius: 14px; background: var(--surface, #fff); border: 1px dashed var(--border-mid); }
+  .fr-bar button { display: inline-flex; align-items: center; gap: 8px; padding: 9px 14px; border-radius: 10px; border: 1px solid var(--border-light); background: var(--bg-tertiary); color: var(--text-primary); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .fr-count { font-size: 13px; color: var(--text-secondary); }
+  /* the full research (channels, every ad, funnels, notes) stays out of the way on the overview until opened;
+     the sidebar's Creatives / Funnels / Channels views always show their section */
+  #fr-bar { display: none !important; }   /* editor: the research tables are always open */
+  body.board-view #ov-snapshot, body.board-view #insights, body.board-view #ov-proven, body.board-view #ov-funnels, body.board-view #fr-bar { display: none !important; }
+  /* ad cards: creative, offer, landing, channel, format, geo, days running; "More" opens angle, headline, CTA, title, notes */
+  /* Everflow links stand out (title button, funnel offer links, detail panel) */
+  #title-link-btn { background: var(--accent, #2563eb) !important; color: #fff !important; border-color: transparent !important; padding: 6px 12px !important; }
+  #funnels-table td:nth-child(5) .link-chip { background: var(--accent, #2563eb); color: #fff; border-radius: 6px; padding: 3px 8px; font-weight: 600; }
+  #funnels-table td:nth-child(5) .link-chip svg path { stroke: #fff; }
+  .ef-open { display: inline-flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 10px; background: var(--accent, #2563eb); color: #fff !important; font-weight: 590; font-size: 14px; text-decoration: none; transition: background .15s; }
+  .ef-open:hover { background: var(--accent-hover, #1d4ed8); }
+  /* sidebar: Overview, Creatives, Funnels (channels live in Full research) */
+  #nav-traffic, #nav-metrics { display: none !important; }
+  /* How to start / What's working */
+  .ins { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 20px; }
+  .ins-card { padding: 18px 20px; border-radius: 14px; background: var(--surface, #fff); border: 1px solid var(--border-light); box-shadow: var(--shadow-sm); border-top: 4px solid var(--ins-c); }
+  .ins-card--working { --ins-c: var(--green-success); --ins-bg: var(--teal-bg); --ins-text: var(--teal-text); }
+  .ins-card--todo { --ins-c: var(--accent); --ins-bg: var(--blue-bg); --ins-text: var(--blue-text); }
+  .ins-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ins-badge { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: var(--ins-bg); color: var(--ins-text); flex-shrink: 0; }
+  .ins-title { margin: 0; font-size: 18px; font-weight: 650; color: var(--text-primary); letter-spacing: -0.01em; }
+  .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; counter-reset: ins; }
+  .ins-list li { position: relative; padding-left: 28px; font-size: 14.5px; line-height: 1.45; color: var(--text-primary); }
+  .ins-card--working .ins-list li::before { content: ""; position: absolute; left: 6px; top: 7px; width: 8px; height: 8px; border-radius: 50%; background: var(--ins-c); }
+  .ins-card--todo .ins-list li { counter-increment: ins; }
+  .ins-card--todo .ins-list li::before { content: counter(ins); position: absolute; left: 0; top: 1px; width: 20px; height: 20px; border-radius: 6px; display: grid; place-items: center; font-size: 11px; font-weight: 600; background: var(--ins-bg); color: var(--ins-text); }
+  .ins-more { margin-top: 14px; border-top: 1px solid var(--border-light); padding-top: 10px; }
+  .ins-more summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; }
+  .ins-more summary::-webkit-details-marker { display: none; }
+  .ins-more summary::after { content: " ▾"; }
+  .ins-more[open] summary::after { content: " ▴"; }
+  .ins-full { margin-top: 10px; display: flex; flex-direction: column; gap: 12px; }
+  .ins-full h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+  .ins-full p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.55; color: var(--text-primary); }
+  .ins-card[hidden] { display: none !important; }
+  @media (max-width: 860px) { .ins { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) {
+    .mx { padding: 16px; }
+    .mx-period { white-space: normal; border-radius: 12px; }
+  }
+  @media (max-width: 760px) { .sn-tiles { grid-template-columns: 1fr; } }
+</style>
+<script>
+  // Data for the overview: the affiliate site's own partners.json (CR/EPC/payout are only ever published there,
+  // anonymised). The editor and share copy read the same file and match the open report by id.
+  function _ovReports() {
+    if (!window._ovReportsP) {
+      window._ovReportsP = typeof _partnerOffers === 'function' ? _partnerOffers()
+        : fetch('/creative-research-partners/data/partners.json', { cache: 'no-cache' }).then(r => r.json()).then(j => j.offers || []).catch(() => []);
+    }
+    return window._ovReportsP;
+  }
+  function _ovEsc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+  function _ovDate(d) { const p = (d || '').split('-'); return p.length === 3 ? `${+p[2]} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+p[1] - 1]} ${p[0]}` : (d || ''); }
+  function _ovMoney(v) { return v == null ? '—' : '$' + (Math.round(v * 100) / 100).toFixed(v >= 100 ? 0 : 2).replace(/\.00$/, ''); }
+  function _ovRange(a, b, fmt) { return a == null ? '—' : (a === b ? fmt(a) : `${fmt(a)} – ${fmt(b)}`); }
+  function _ovEverflowLink(u) { return /^https:\/\/point2web\.everflowclient\.io\/affiliate\/offers\/\d+$/.test(u || '') ? u : ''; }
+  // colour class of a chip: channel, format, funnel type ('Native-article' -> ovc-native-article)
+  function _ovChip(v, extra) { const k = String(v || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); return (extra || '') + (k ? ' ovc-' + k : ''); }
+  function _ovMediaUrl(u) { u = String(u || '').trim(); return /^https:\/\/[^\s"'<>]+$/.test(u) ? u : ''; }
+
+  function renderSnapshot(pd) {
+    const box = document.getElementById('ov-snapshot'), list = document.getElementById('ov-snapshot-list');
+    if (!box || !list) return;
+    const offers = (pd && pd.efOffers) || [];
+    if (!offers.length) { box.hidden = true; list.innerHTML = ''; return; }
+    const t0 = offers[0].top || {};
+    document.getElementById('ov-snapshot-period').textContent = t0.from ? `Last 90 days · ${_ovDate(t0.from)} – ${_ovDate(t0.to)}` : '';
+    const vis = { private: ['Private · ask your account manager', 'sn-tag--purple'], require_approval: ['Approval required', 'sn-tag--amber'], public: ['Open to all partners', ''] };
+    list.innerHTML = offers.map(o => {
+      const t = o.top || {}, ps = t.partners || [];
+      const epcs = ps.map(p => p.epc), crs = ps.map(p => p.cr);
+      const v = vis[o.visibility];
+      const tags = (v ? `<span class="sn-tag ${v[1]}">${_ovEsc(v[0])}</span>` : '') + (o.status && o.status !== 'active' ? `<span class="sn-tag">${_ovEsc(o.status[0].toUpperCase() + o.status.slice(1))}</span>` : '');
+      const epcVal = ps.length ? _ovMoney(Math.max(...epcs)) : '—';
+      const epcNote = ps.length ? `best partner · ${t.min_clicks}+ clicks, ${t.min_conversions}+ conversions` : 'not enough partner data yet';
+      const rev = /rev share/.test(t.default_payout || '');
+      const payVal = t.payout_min != null ? _ovRange(t.payout_min, t.payout_max, _ovMoney) : '—';
+      const payNote = (t.payout_min != null ? 'per conversion · ' : '') + (rev ? _ovEsc(t.default_payout) + ' · real payouts' : 'depends on traffic quality · ask your account manager');
+      const crVal = ps.length ? Math.max(...crs).toFixed(1) + '%' : '—';
+      const none = ps.length ? '' : `<p class="sn-avg">No partner has ${t.min_clicks}+ clicks and ${t.min_conversions}+ conversions on this offer in the last 90 days yet.</p>`;
+      const link = _ovEverflowLink(o.link);
+      return `<article class="sn-card">
+        <div class="sn-top"><div class="sn-name">${_ovEsc(o.name || ('Offer ' + o.id))}<span class="sn-id">ID ${_ovEsc(o.id)}</span></div>${tags ? `<div class="sn-tags">${tags}</div>` : ''}</div>
+        <div class="sn-tiles">
+          <div class="sn-tile sn-tile--hero"><div class="sn-tile-label">Top partner EPC</div><div class="sn-tile-value">${epcVal}</div><div class="sn-tile-note">${epcNote}</div></div>
+          <div class="sn-tile"><div class="sn-tile-label">Payout</div><div class="sn-tile-value">${payVal}</div><div class="sn-tile-note">${payNote}</div></div>
+          <div class="sn-tile"><div class="sn-tile-label">Top partner CR</div><div class="sn-tile-value">${crVal}</div><div class="sn-tile-note">${ps.length ? 'best conversion rate among those partners' : '&nbsp;'}</div></div>
+        </div>
+        ${none}
+        <div class="sn-actions">${link ? `<a class="sn-open" href="${_ovEsc(link)}" target="_blank" rel="noopener">Open offer in Everflow ↗</a>` : ''}<span class="sn-trust">Real Everflow numbers · updated daily</span></div>
+      </article>`;
+    }).join('');
+    box.hidden = false;
+  }
+
+  function renderInsights(pd) {
+    const box = document.getElementById('insights');
+    if (!box) return;
+    const ins = pd && pd.insights;
+    const fill = (id, bullets, full) => {
+      const card = document.getElementById(id);
+      const sections = Object.entries(full || {}).filter(([, t]) => t && t.trim());
+      card.hidden = !bullets.length && !sections.length;
+      card.querySelector('.ins-list').innerHTML = bullets.map(b => `<li>${_ovEsc(b)}</li>`).join('');
+      const more = card.querySelector('.ins-more');
+      more.hidden = !sections.length; more.open = !bullets.length;
+      more.querySelector('.ins-full').innerHTML = sections.map(([h, t]) =>
+        `<div><h3>${_ovEsc(h)}</h3>${t.split(/\n\s*\n|\n(?=- )/).map(p => `<p>${_ovEsc(p.trim())}</p>`).join('')}</div>`).join('');
+    };
+    if (!ins) { box.style.display = 'none'; return; }
+    fill('ins-todo', ins.todo || [], ins.todoFull);
+    fill('ins-working', ins.working || [], ins.workingFull);
+    box.style.display = document.getElementById('ins-working').hidden && document.getElementById('ins-todo').hidden ? 'none' : '';
+  }
+
+  // Proven creatives: the longest-running ads (advertisers stop losing ads fast), 15 at most
+  function renderProven(data) {
+    const box = document.getElementById('ov-proven'), grid = document.getElementById('ov-proven-grid');
+    if (!box || !grid) return;
+    // a creative is {t, url, thumb} (uploaded) or a plain link (older reports)
+    const mediaOf = c => c && typeof c === 'object' ? { url: _ovMediaUrl(c.url), thumb: _ovMediaUrl(c.thumb) } : { url: _ovMediaUrl(c), thumb: '' };
+    // days running = the FIRST number of the lifecycle text ('178 days (since 26 Apr)' -> 178, '<1 day' -> 0)
+    const ads = ((data && data.ads) || []).map((a, i) => ({ a, i, days: parseInt((String(a.lifecycle || '').match(/\d+/) || ['0'])[0], 10) || 0, ...mediaOf(a.creative) }))
+      .map(x => ({ ...x, media: x.url }))
+      .filter(x => x.media && x.days > 0).sort((x, y) => y.days - x.days).slice(0, 15);
+    if (!ads.length) { box.hidden = true; grid.innerHTML = ''; return; }
+    grid.innerHTML = ads.map(({ a, i, days, media, thumb }) => {
+      const video = /\/video\/upload\/|\.(mp4|mov|webm)(\?|$)/i.test(media);
+      const m = video ? `<video src="${_ovEsc(media)}#t=0.5" muted playsinline preload="metadata"></video>` : `<img src="${_ovEsc(thumb || media)}" alt="" loading="lazy">`;
+      const chips = [a.channel, a.format].filter(Boolean).map(c => `<span class="${_ovChip(c, 'pc-chip')}">${_ovEsc(String(c).replace(/-/g, ' ').replace(/^./, ch => ch.toUpperCase()))}</span>`).join('');
+      const play = video ? '<span class="pc-play" aria-label="Video"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" data-icon="play"><path d="M6 4v16l14-8z"/></svg>Video</span>' : '';
+      return `<button type="button" class="pc-card" data-ad="${i}"><div class="pc-media">${m}${play}</div><div class="pc-body">
+        <div class="pc-meta"><span class="pc-chip pc-chip--days">Running ${days} days</span>${chips}</div>
+        <div class="pc-head">${_ovEsc(a.headline || a.angle || a.title || '')}</div><div class="pc-actions"><span class="pc-more">More ›</span></div></div></button>`;
+    }).join('');
+    grid.querySelectorAll('.pc-card').forEach(b => b.addEventListener('click', () => { if (typeof openAdDetail === 'function') openAdDetail(+b.dataset.ad); }));
+    box.hidden = false;
+  }
+
+  // Proven funnels: the pages that lead to this offer, as cards with a page preview (screenshot taken daily by
+  // tools/funnel_previews.py into the media mirror; a page without one shows its domain instead)
+  const _OV_MEDIA = 'https://mkruchan.github.io/creative-research-media/m/';
+  function _ovPreviewUrl(f) { return /^[0-9a-f]{16}$/.test(f.preview || '') ? _OV_MEDIA + 'funnels/' + f.preview + '.jpg' : ''; }
+  // The partner-safe reports carry the preview key; a raw report (internal site) does not, so it is derived the same
+  // way: sha1 of the bare link (no query/fragment), first 16 hex chars — partner_aux.note_key(bare_url(link)).
+  function _ovBareLink(u) { u = String(u || '').trim(); return u.startsWith('http') ? u.split(/[?#]/)[0].split(/%20\(|\s/)[0] : u; }
+  async function _ovDeriveKey(link) {
+    if (!(window.crypto && crypto.subtle && window.TextEncoder)) return '';
+    const buf = await crypto.subtle.digest('SHA-1', new TextEncoder().encode(_ovBareLink(link).trim()));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 16);
+  }
+  function renderTopFunnels(data) {
+    const box = document.getElementById('ov-funnels'), list = document.getElementById('ov-funnels-list');
+    if (!box || !list) return;
+    const cap = v => String(v || '').replace(/-/g, ' ').replace(/^./, c => c.toUpperCase());
+    const host = u => { const m = /^https?:\/\/([^\/?#]+)/i.exec(String(u || '').trim()); return m ? m[1].replace(/^www\./, '') : ''; };
+    const rows = ((data && data.funnels) || []).map((f, i) => ({ f, i, d: host(f.link) })).filter(x => x.d)
+      .sort((x, y) => (y.f.everflow === 'ef-yes') - (x.f.everflow === 'ef-yes') || x.i - y.i).slice(0, 5);
+    if (!rows.length) { box.hidden = true; list.innerHTML = ''; return; }
+    list.innerHTML = rows.map(({ f, i, d }) => {
+      const ef = /^https:\/\/[a-z0-9.-]*everflowclient\.io\/[^\s"'<>]*$/i.test(f.efLink || '') ? f.efLink : '';
+      const page = _ovMediaUrl(f.link), shot = _ovPreviewUrl(f);
+      const chips = [[f.type, _ovChip(f.type, 'tf-chip')], [f.trafficSource, _ovChip(f.trafficSource, 'tf-chip')], [f.geo, 'tf-chip ovc-geo']].filter(c => c[0])
+        .map(([v, cls]) => `<span class="${cls}">${_ovEsc(cap(v))}</span>`).join('');
+      return `<div class="tf-card" role="button" tabindex="0" data-funnel="${i}">
+        <div class="tf-shot${shot ? '' : ' tf-shot--none'}">${shot ? `<img src="${_ovEsc(shot)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('tf-shot--none')">` : ''}<div class="tf-shot-ph">${_ovEsc(d)}</div></div>
+        <div class="tf-body"><div class="tf-domain">${_ovEsc(d)}</div><div class="tf-adv">${_ovEsc(f.advertiser || '')}</div>
+          ${chips ? `<div class="tf-meta">${chips}</div>` : ''}
+          <div class="tf-actions">${page ? `<a class="tf-open" href="${_ovEsc(page)}" target="_blank" rel="noopener">Open page ↗</a>` : ''}${ef ? `<a class="tf-ef" href="${_ovEsc(ef)}" target="_blank" rel="noopener">Everflow ↗</a>` : ''}<span class="tf-more">More ›</span></div></div></div>`;
+    }).join('');
+    list.querySelectorAll('.tf-card').forEach(r => {
+      const go = e => { if (e.target.closest('a')) return; if (typeof openFunnelDetail === 'function') openFunnelDetail(+r.dataset.funnel); };
+      r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(e); });
+    });
+    // raw reports: derive the preview key and add the screenshot when the mirror has one
+    rows.filter(({ f }) => !f.preview && _ovMediaUrl(f.link)).forEach(({ f, i }) => _ovDeriveKey(f.link).then(key => {
+      if (!key) return;
+      f.preview = key;
+      const shot = list.querySelector(`.tf-card[data-funnel="${i}"] .tf-shot`);
+      if (!shot || shot.querySelector('img')) return;
+      // show the image area first: a lazy image inside the hidden placeholder (display: none) would never load
+      const img = document.createElement('img'); img.alt = ''; img.loading = 'lazy';
+      img.onerror = () => shot.classList.add('tf-shot--none');
+      shot.classList.remove('tf-shot--none');
+      img.src = _ovPreviewUrl(f);
+      shot.prepend(img);
+    }).catch(() => {}));
+    box.hidden = false;
+  }
+
+  function renderFullResearchBar(data) {
+    const c = document.getElementById('fr-count');
+    if (!c) return;
+    const n = k => ((data && data[k]) || []).filter(r => Object.entries(r).some(([key, v]) => key !== 'num' && String(v || '').trim())).length;
+    c.textContent = `${n('traffic')} channels · ${n('ads')} ads · ${n('funnels')} funnels`;
+  }
+
+  async function renderOverview(data) {
+    renderProven(data); renderTopFunnels(data); renderFullResearchBar(data);
+    const rows = await _ovReports();
+    const id = typeof _currentOfferId !== 'undefined' ? _currentOfferId : null;
+    const row = rows.find(r => r.id === id) || rows.find(r => r.data?.header?.title && r.data.header.title === data?.header?.title);
+    const pd = row ? row.data : null;
+    renderSnapshot(pd); renderInsights(pd);
+  }
+  function toggleFullResearch() {
+    const open = document.body.classList.toggle('fr-open');
+    const b = document.getElementById('fr-toggle');
+    if (b) { b.setAttribute('aria-expanded', open ? 'true' : 'false'); b.textContent = open ? 'Hide full research' : 'Open full research'; }
+    if (open && typeof window.fitTableRows === 'function') setTimeout(window.fitTableRows, 60);
+  }
+  // sidebar wording and card labels for the affiliate-first layout
+  (function () {
+    const relabel = () => {
+      const set = (id, txt) => { const b = document.getElementById(id); if (!b) return; const t = [...b.childNodes].reverse().find(n => n.nodeType === 3 && n.textContent.trim()); if (t) t.textContent = ' ' + txt + '\n'; b.title = txt; };
+      set('nav-report', 'Overview'); set('nav-ads', 'Creatives');
+      document.querySelectorAll('.grid-card .gc-field-label').forEach(l => { if (l.textContent.trim() === 'Lifecycle') l.textContent = 'Days running'; });
+      document.querySelectorAll('.card-expand-label').forEach(l => { if (/Angle, Headline/.test(l.textContent)) l.textContent = 'More'; });
+    };
+    const boot = () => { relabel(); new MutationObserver(relabel).observe(document.getElementById('ads-grid') || document.body, { childList: true, subtree: true }); };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+  })();
+</script>
+<!-- /overview -->
 </body>
 </html>
